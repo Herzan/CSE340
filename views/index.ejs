@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <%- include('partials/head') %>
+  <body>
+    <div class="page-frame">
+      <%- include('partials/header') %>
+      <%- include('partials/nav') %>
+
+      <main class="container" role="main">
+        <h2 class="welcome">Welcome to CSE Motors!</h2>
+
+        <section class="hero">
+          <div class="hero-text">
+            <h3 class="model-title">DMC Delorean</h3>
+            <ul class="features">
+              <li>3 Cup holders</li>
+              <li>Superman doors</li>
+              <li>Fuzzy dice!</li>
+            </ul>
+            <button class="cta" id="ownTodayBtn">Own Today</button>
+          </div>
+
+          <div class="hero-image" aria-hidden="false">
+            <img src="/images/vehicles/delorean.jpg" alt="DMC Delorean" />
+          </div>
+        </section>
+
+        <section class="content-grid">
+          <div class="upgrades">
+            <h4>Delorean Upgrades</h4>
+            <div class="upgrade-grid">
+              <figure>
+                <img src="/images/upgrades/flux-cap.png" alt="Flux Capacitor" />
+                <figcaption><a href="#">Flux Capacitor</a></figcaption>
+              </figure>
+              <figure>
+                <img src="/images/upgrades/flame.jpg" alt="Flame Decals" />
+                <figcaption><a href="#">Flame Decals</a></figcaption>
+              </figure>
+              <figure>
+                <img src="/images/upgrades/bumper_sticker.jpg" alt="Bumper Stickers" />
+                <figcaption><a href="#">Bumper Stickers</a></figcaption>
+              </figure>
+              <figure>
+                <img src="/images/upgrades/hub-cap.jpg" alt="Hub Caps" />
+                <figcaption><a href="#">Hub Caps</a></figcaption>
+              </figure>
+            </div>
+          </div>
+
+          <aside class="reviews-and-form">
+            <div class="reviews">
+              <h4>DMC Delorean Reviews</h4>
+              <ul>
+                <li>"So fast it's almost like traveling in time." (4/5)</li>
+                <li>"Coolest ride on the road." (4/5)</li>
+                <li>"I'm feeling McFly!" (5/5)</li>
+                <li>"The most futuristic ride of our day." (4.5/5)</li>
+                <li>"80's livin and I love it!" (5/5)</li>
+              </ul>
+            </div>
+
+            <div class="order-form">
+              <h4>Order or Request Info</h4>
+
+              <% if (errors && errors.length) { %>
+                <div class="error-list" role="alert" aria-live="polite">
+                  <p><strong>Fix these:</strong></p>
+                  <ul>
+                    <% errors.forEach(function(e){ %>
+                      <li><%= e %></li>
+                    <% }) %>
+                  </ul>
+                </div>
+              <% } %>
+
+              <form id="orderForm" method="post" action="/orders" novalidate>
+                <label for="name">Name</label>
+                <input id="name" name="name" type="text" value="<%= formData.name || '' %>" required />
+
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" value="<%= formData.email || '' %>" required />
+
+                <label for="model">Model</label>
+                <select id="model" name="model" required>
+                  <option value="">Select a model</option>
+                  <option value="DMC Delorean" <%= (formData.model === 'DMC Delorean') ? 'selected' : '' %>>DMC Delorean</option>
+                  <option value="Custom Coupe" <%= (formData.model === 'Custom Coupe') ? 'selected' : '' %>>Custom Coupe</option>
+                </select>
+
+                <label for="quantity">Quantity</label>
+                <input id="quantity" name="quantity" type="number" min="1" value="<%= formData.quantity || 1 %>" required />
+
+                <button type="submit" class="submit">Submit Request</button>
+                <p class="small">We validate client & server side. For demo only — no payment is collected.</p>
+              </form>
+            </div>
+
+            <div class="orders-list" aria-live="polite">
+              <h4>Recent Requests</h4>
+              <% if (orders && orders.length) { %>
+                <ul>
+                  <% orders.forEach(function(o){ %>
+                    <li><strong><%= o.name %></strong> requested <em><%= o.quantity %> × <%= o.model %></em></li>
+                  <% }) %>
+                </ul>
+              <% } else { %>
+                <p>No requests yet — be the first!</p>
+              <% } %>
+            </div>
+          </aside>
+        </section>
+      </main>
+
+      <%- include('partials/footer') %>
+    </div>
+
+    <script src="/js/main.js"></script>
+  </body>
+</html>

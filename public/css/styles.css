@@ -1,34 +1,43 @@
 /* Mobile first */
 :root{
-  --accent:#0b97b6; /* teal */
+  --accent:#0b97b6;
   --dark:#1f2b38;
-  --muted:#6b7a86;
+  --muted:#5f6f7c; /* darkened for contrast */
   --bg:#ffffff;
   --card:#f6fbfc;
   --max-width:980px;
-  font-family: "Open Sans", Arial, sans-serif;
   color-scheme: light;
 }
 
 /* Basic reset */
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  background: #fff;
-  color:var(--dark);
-  line-height:1.45;
-  -webkit-font-smoothing:antialiased;
-  font-size:16px;
+*{
+  box-sizing:border-box;
 }
 
-/* page frame (center and border) */
+html, body{
+  height:100%;
+}
+
+body{
+  margin:0;
+  font-family: "Open Sans", Arial, sans-serif;
+  background-color:#ffffff;
+  background-image: url('/images/site/checkerboard.jpg');
+  background-repeat: repeat;
+  background-position: top left;
+  color:var(--dark);
+  line-height:1.5;
+  font-size:16px;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* page frame */
 .page-frame{
   max-width:var(--max-width);
   margin:16px auto;
-  border:6px solid #000; /* subtle reference to checkerboard from sample */
+  border:6px solid #000;
   padding:12px;
-  background:var(--card);
+  background-color: rgba(246, 251, 252, 0.96);
   border-radius:6px;
 }
 
@@ -39,146 +48,225 @@ body{
   align-items:center;
   padding:8px 4px;
 }
+
 .brand a{
   text-decoration:none;
   color:var(--dark);
   font-weight:700;
   font-size:1.3rem;
 }
+
+.brand a:hover,
+.brand a:focus{
+  text-decoration:underline;
+}
+
 .account-link a{
   color:var(--muted);
   text-decoration:none;
   font-size:0.9rem;
 }
 
+.account-link a:hover,
+.account-link a:focus{
+  text-decoration:underline;
+}
+
 /* nav */
 .main-nav{
   background:var(--dark);
-  color:#fff;
   margin-top:8px;
   border-radius:4px;
 }
+
 .main-nav ul{
   list-style:none;
   margin:0;
   padding:6px;
   display:flex;
   gap:8px;
-  overflow:auto;
 }
+
 .main-nav a{
-  color:#fff;
+  color:#ffffff;
   text-decoration:none;
   padding:8px 12px;
   display:inline-block;
 }
 
-/* Welcome */
-.container{padding:12px}
-.welcome{font-size:1.1rem;font-weight:700;margin:6px 0 12px}
+.main-nav a:hover,
+.main-nav a:focus{
+  background-color:var(--accent);
+  border-radius:4px;
+}
 
-/* Hero - stacked on mobile */
+/* Welcome */
+.container{
+  padding:12px;
+}
+
+.welcome{
+  font-size:1.1rem;
+  font-weight:700;
+  margin:6px 0 12px;
+}
+
+/* Hero */
 .hero{
   display:grid;
-  grid-template-columns: 1fr;
+  grid-template-columns:1fr;
   gap:12px;
   align-items:center;
-  background:linear-gradient(180deg, rgba(11,151,182,0.04), transparent);
+  background:linear-gradient(180deg, rgba(11,151,182,0.05), transparent);
   padding:12px;
   border-radius:6px;
 }
+
 .hero-text .model-title{
   color:var(--accent);
-  margin:0 0 8px 0;
+  margin:0 0 8px;
   font-size:1.25rem;
 }
-.features{margin:6px 0 10px 1rem;padding:0}
+
+.features{
+  margin:6px 0 10px 1rem;
+  padding:0;
+}
+
 .cta{
   background:var(--accent);
-  border:none;
-  color:white;
+  color:#ffffff;
   padding:10px 14px;
+  border:none;
   border-radius:4px;
   cursor:pointer;
 }
+
+.cta:hover,
+.cta:focus{
+  background-color:#087f99;
+  outline:2px solid #000;
+}
+
+/* images */
 .hero-image img{
   width:100%;
   height:auto;
   display:block;
+  background-color:#ffffff;
 }
 
-/* content grid (stack on mobile) */
+/* content grid */
 .content-grid{
   display:grid;
-  grid-template-columns: 1fr;
+  grid-template-columns:1fr;
   gap:14px;
   margin-top:16px;
 }
 
-/* upgrades grid */
+/* upgrades */
 .upgrade-grid{
   display:grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns:repeat(2,1fr);
   gap:8px;
-  align-items:center;
 }
+
 .upgrade-grid figure{
-  background:white;
+  background:#ffffff;
   padding:8px;
   border-radius:6px;
   text-align:center;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow:0 1px 2px rgba(0,0,0,0.05);
 }
-.upgrade-grid img{max-width:90px; display:inline-block}
 
-/* aside reviews and form */
+.upgrade-grid img{
+  max-width:90px;
+}
+
+/* aside */
 .reviews-and-form{
-  background:white;
+  background:#ffffff;
   padding:10px;
   border-radius:6px;
 }
-.order-form input, .order-form select{
+
+/* forms */
+.order-form input,
+.order-form select{
   width:100%;
   padding:8px;
-  margin:6px 0 10px 0;
-  border:1px solid #ccc;
+  margin:6px 0 10px;
+  border:1px solid #999;
   border-radius:4px;
 }
+
+.order-form input:focus,
+.order-form select:focus{
+  outline:2px solid var(--accent);
+}
+
+/* buttons */
 .submit{
   background:var(--dark);
-  color:white;
+  color:#ffffff;
   padding:8px 12px;
   border:none;
   border-radius:4px;
   cursor:pointer;
 }
-.small{font-size:0.85rem;color:var(--muted)}
+
+.submit:hover,
+.submit:focus{
+  background:#000000;
+  outline:2px solid var(--accent);
+}
+
+.small{
+  font-size:0.85rem;
+  color:var(--muted);
+}
 
 /* errors */
-.error-list{background:#fff6f6;border:1px solid #f2bdbd;padding:8px;border-radius:4px;color:#7a1b1b}
+.error-list{
+  background:#fff6f6;
+  border:1px solid #f2bdbd;
+  padding:8px;
+  border-radius:4px;
+  color:#7a1b1b;
+}
 
 /* footer */
-.site-footer{margin-top:16px;padding:10px;text-align:center;color:var(--muted);font-size:0.9rem}
-
-/* big screens: layout side-by-side */
-@media (min-width: 800px){
-  .hero{grid-template-columns: 1fr 460px; gap:20px}
-  .content-grid{grid-template-columns: 2fr 1fr; gap:20px}
-  .upgrade-grid{grid-template-columns: repeat(4, 1fr)}
-  .page-frame{margin:24px auto;padding:16px}
-  .welcome{font-size:1.3rem}
+.site-footer{
+  margin-top:16px;
+  padding:10px;
+  text-align:center;
+  color:var(--muted);
+  font-size:0.9rem;
 }
 
-body {
-  /* Use your uploaded checkerboard image */
-  background-image: url('/images/site/checkerboard.jpg'); /* update this path */
-  background-repeat: repeat; /* tile it */
-  background-size: auto; /* keep original size */
-  background-position: top left; /* start tiling from top left */
-  background-color: #fff; /* fallback color */
+/* desktop */
+@media (min-width:800px){
+  .hero{
+    grid-template-columns:1fr 460px;
+    gap:20px;
+  }
+
+  .content-grid{
+    grid-template-columns:2fr 1fr;
+    gap:20px;
+  }
+
+  .upgrade-grid{
+    grid-template-columns:repeat(4,1fr);
+  }
+
+  .page-frame{
+    margin:24px auto;
+    padding:16px;
+  }
+
+  .welcome{
+    font-size:1.3rem;
+  }
 }
 
-/* Optional: make page-frame background semi-transparent to see checkerboard behind */
-.page-frame {
-  background-color: rgba(246, 251, 252, 0.95); /* slightly transparent card */
-}

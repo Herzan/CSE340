@@ -1,4 +1,4 @@
-const pool = require('./database/')
+const pool = require('./database')
 require('dotenv').config()
 
 async function testEverything() {

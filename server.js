@@ -1,139 +1,155 @@
 /* ******************************************
- * This server.js file is the primary file of the
- * application. It is used to control the project.
+ * server.js
+ * Primary application controller
  *******************************************/
 
 /* ***********************
  * Require Statements
  *************************/
-// Their stuff
+// Core & third-party
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const flash = require("connect-flash");
+const dotenv = require("dotenv").config();
 
-// My stuff
-const static = require("./routes/static");
+// Database & session store
+const pgSession = require("connect-pg-simple")(session);
+const pool = require("./database/");
+
+// Routes & controllers
+const staticRoutes = require("./routes/static");
+const inventoryRoute = require("./routes/inventoryRoute");
+const accountRoute = require("./routes/accountRoute");
 const baseController = require("./controllers/baseController");
-const inventoryRoute = require("./routes/inventoryRoute.js");
-const accountRoute = require('./routes/accountRoute.js');
-const utilities = require("./utilities/index.js");
-const pool = require("./database/")
 
-// Init
+// Utilities
+const utilities = require("./utilities");
+
+// App init
 const app = express();
-const env = require("dotenv").config();
-
 
 /* ***********************
- * Middleware
- * ************************/
+ * Trust proxy (RENDER)
+ *************************/
+app.set("trust proxy", 1);
+
+/* ***********************
+ * Session Middleware
+ *************************/
 app.use(
   session({
-    store: new (require("connect-pg-simple")(session))({
-      createTableIfMissing: true,
+    store: new pgSession({
       pool,
+      createTableIfMissing: true,
     }),
+    name: "cse340.sid",
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    name: "sessionId",
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      sameSite: "lax",
+    },
   })
 );
-// Express Messages Middleware
-app.use(require("connect-flash")());
-app.use(function (req, res, next) {
+
+/* ***********************
+ * Flash Messages
+ *************************/
+app.use(flash());
+app.use((req, res, next) => {
   res.locals.messages = require("express-messages")(req, res);
   next();
 });
+
+/* ***********************
+ * Body & Cookie Parsers
+ *************************/
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ // for parsing application/x-www-form-urlencoded
-  extended: true
-}));
-// Cookie parser
-app.use(cookieParser())
-// JWT checker
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+/* ***********************
+ * JWT Middleware
+ *************************/
 app.use(utilities.checkJWTToken);
 
 /* ***********************
- * View Engine and Templates
+ * View Engine
  *************************/
 app.set("view engine", "ejs");
 app.use(expressLayouts);
-app.set("layout", "./layouts/layout"); // Not at view root
+app.set("layout", "./layouts/layout");
 
 /* ***********************
  * Routes
  *************************/
-app.use(static);
-// Index route
+// Static files
+app.use(staticRoutes);
+
+// Home
 app.get("/", utilities.handleErrors(baseController.buildHome));
-// Inventory routes
+
+// Inventory
 app.use("/inv", inventoryRoute);
-// Account routes
+
+// Account
 app.use("/account", accountRoute);
-// File Not Found Route - must be last route in list
-app.use(async (req, res, next) => {
-  next({status: 404, message: 'Unfortunately, we don\'t have that page in stock.'})
-})
 
-// File Not Found Route - must be last route in list
+/* ***********************
+ * 404 Handler (LAST ROUTE)
+ *************************/
 app.use(async (req, res, next) => {
-  let nav
+  let nav;
   try {
-    nav = await utilities.getNav()
-  } catch (error) {
-    nav = '<ul><li><a href="/" title="Home page">Home</a></li></ul>'
+    nav = await utilities.getNav();
+  } catch {
+    nav = '<ul><li><a href="/">Home</a></li></ul>';
   }
-  
+
   next({
-    status: 404, 
+    status: 404,
     message: "Unfortunately, we don't have that page in stock.",
-    nav: nav
-  })
-})
+    nav,
+  });
+});
 
 /* ***********************
-* Express Error Handler
-* Place after all other middleware
-*************************/
+ * Global Error Handler
+ *************************/
 app.use(async (err, req, res, next) => {
-  let nav
+  let nav;
   try {
-    nav = await utilities.getNav()
-  } catch (error) {
-    nav = '<ul><li><a href="/" title="Home page">Home</a></li></ul>'
+    nav = await utilities.getNav();
+  } catch {
+    nav = '<ul><li><a href="/">Home</a></li></ul>';
   }
-  
-  console.error(`Error at: "${req.originalUrl}": ${err.message}`)
-  
-  let message
-  if (err.status == 404) { 
-    message = err.message 
-  } else { 
-    message = 'Oh no! There was a crash. Maybe try a different route?' 
-  }
-  
-  res.render("errors/error", {
-    title: err.status || 'Server Error',
-    message,
-    nav: err.nav || nav // Use nav from error if provided, otherwise get new one
-  })
-})
+
+  console.error(`Error at "${req.originalUrl}": ${err.message}`);
+
+  res.status(err.status || 500).render("errors/error", {
+    title: err.status || "Server Error",
+    message:
+      err.status === 404
+        ? err.message
+        : "Oh no! There was a crash. Please try again later.",
+    nav: err.nav || nav,
+  });
+});
 
 /* ***********************
- * Local Server Information
- * Values from .env (environment) file
+ * Server Info
  *************************/
 const port = process.env.PORT || 5500;
 const host = process.env.HOST || "localhost";
 
 /* ***********************
- * Log statement to confirm server operation
+ * Start Server
  *************************/
 app.listen(port, () => {
-  console.log(`app listening on ${host}:${port}`);
+  console.log(`🚀 App running on ${host}:${port}`);
 });
-
-

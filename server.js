@@ -46,14 +46,10 @@ app.use(
       createTableIfMissing: true,
     }),
     name: "cse340.sid",
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: process.env.NODE_ENV === "production",
-      httpOnly: true,
-      sameSite: "lax",
-    },
+  secret: "mySuperSecret123!", // ⚡ REQUIRED
+  resave: false,               // don't save session if unmodified
+  saveUninitialized: true,     // save uninitialized sessions
+  cookie: { secure: false }    // true if using HTTPS
   })
 );
 

@@ -1,0 +1,112 @@
+/******* Inventory Page Stylings ***************/
+
+#inv-display {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(325px, 1fr));
+    grid-gap: 20px;
+    align-items: stretch;
+}
+
+#inv-display > li {
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 6px 0px rgba(0, 0, 0, 0.3);
+    list-style: none;
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+#inv-display > li a img {
+    width: 100%;
+    /* height: auto; */
+    height: 200px;
+    object-fit: cover;
+    grid-row: 1;
+}
+.namePrice hr {
+    width: 95%;
+    margin: 5px auto;
+    border: 1.5px solid var(--tertiary-color);
+}
+
+.namePrice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    grid-row: 2;
+}
+.namePrice h2 {
+    font-size: 1.5em;
+    text-align: center;
+}
+.namePrice h2 a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+.namePrice h2 a:hover {
+    color: var(--secondary-color);
+}
+
+/******* Details Page Stylings ***************/
+
+#details-display {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 20px;
+}
+
+#details-display img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+/* Media query for larger screens (1024px and up) */
+@media (min-width: 1024px) {
+    #details-display {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+#details-info {
+    display: flex;
+    flex-direction: column;
+}
+#details-info h2 {
+    margin: 0 0 10px 0;
+}
+#details-info p {
+    margin: 0 0 10px 0;
+}
+#details-info .price {
+    background-color: var(--light-grey);
+    font-size: 1.25em;
+    font-weight: 800;
+    padding: 20px;
+    margin: 10px 0;
+}
+#details-info .description {
+    padding: 0 0 0 20px;
+}
+.details-list {
+    list-style: none;
+    margin: 10px 0 0;
+}
+ul.details-list {
+    padding: 0 0 0 20px;
+}
+
+.details-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.details-list .checkbox {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    display: inline-block;
+    background-image: url('../images/site/green-check-mark-48.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}

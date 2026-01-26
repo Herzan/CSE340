@@ -1,0 +1,62 @@
+<!-- Content Heading -->
+<% if (title) { %>
+<h1><%= title %></h1>
+<% } else { res.redirect('/') } %>
+
+<!-- Message Block -->
+<%- messages() %> <% if (errors) { %>
+    <ul class="notice">
+        <% errors.array().forEach(error => { %>
+        <li><%= error.msg %></li>
+        <% }) %>
+    </ul>
+    <% } %>
+    
+<!-- Inventory Items Display Grid -->
+<%- grid %>
+
+<!-- Customer Reviews -->
+<section class="customer-reviews">
+    <h2>Customer Reviews</h2>
+
+    <%- customerReviews %> <% if (locals.loggedin) { %> <% const firstInitial = locals.accountData.account_firstname ?
+    locals.accountData.account_firstname.charAt(0).toUpperCase() : ''; const lastName =
+    locals.accountData.account_lastname ? locals.accountData.account_lastname : ''; const screenName =
+    `${firstInitial}${lastName}`; %>
+
+    <div class="container">
+        <div class="review-container">
+            <h3>Write your own review</h3>
+            <form id="reviewForm" class="form-container" action="/review/add-review" method="post">
+                <div class="input">
+                    <label for="screen_name">Screen Name</label>
+                    <input type="text" id="screenName" name="screenName" readonly value="<%- screenName %>" />
+                </div>
+                <div class="input">
+                    <label for="review_text">Review</label>
+                    <textarea
+                        id="review_text"
+                        name="review_text"
+                        style="height: 150px"
+                        placeholder="Add review here...."
+                        title="Please enter your review."
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="submit-button">
+                    <button type="submit">Submit Review</button>
+                </div>
+                <input type="hidden" name="inv_id" <% if (locals.inv_id) { %> value="<%= locals.inv_id %>" <% } %>>
+                <input type="hidden" name="account_id" <% if (locals.account_id) { %> value="<%= locals.account_id %>"
+                <% } %>>
+            </form>
+        </div>
+    </div>
+    <p>Welcome <%- screenName %> you are logged in.</p>
+    <% } else { %>
+    <!-- message if you are not logged in -->
+    <p>You must be <a href="/account/login" title="Click to log in">logged in</a> to write a review.</p>
+    <% } %>
+    
+</section>

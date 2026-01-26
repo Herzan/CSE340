@@ -1,0 +1,45 @@
+<%- include('../partials/head') %>
+<body>
+  <div class="page-frame">
+    <%- include('../partials/header') %>
+    <%- include('../partials/nav') %>
+
+    <main class="container">
+      <section class="vehicle-detail-container">
+
+        <div class="vehicle-image">
+          <img src="<%= vehicle.inv_image %>" 
+               alt="<%= vehicle.inv_make %> <%= vehicle.inv_model %>">
+        </div>
+
+        <div class="vehicle-info">
+          <h1><%= vehicle.inv_year %> <%= vehicle.inv_make %> <%= vehicle.inv_model %></h1>
+
+          <div class="vehicle-details">
+            <p class="price"><strong>Price:</strong> 
+              <%= utilities.formatPrice(vehicle.inv_price) %>
+            </p>
+            <p><strong>Mileage:</strong> 
+              <%= utilities.formatMiles(vehicle.inv_miles) %> miles
+            </p>
+            <p><strong>Color:</strong> <%= vehicle.inv_color %></p>
+            <p><strong>Classification:</strong> <%= vehicle.classification_name %></p>
+          </div>
+
+          <div class="vehicle-description">
+            <h3>Description</h3>
+            <p><%= vehicle.inv_description %></p>
+          </div>
+
+          <a class="cta" href="/inventory/type/<%= vehicle.classification_id %>">
+            Back to <%= vehicle.classification_name %>
+          </a>
+        </div>
+
+      </section>
+    </main>
+
+    <%- include('../partials/footer') %>
+  </div>
+</body>
+</html>

@@ -1,5 +1,6 @@
-<footer class="site-footer" role="contentinfo">
-  <div>
-    <p>© <span id="year"><%= new Date().getFullYear() %></span>, CSE 340 App</p>
-  </div>
+<% const d = new Date()
+let year = d.getFullYear() %>
+<footer>
+  <p class="copyright">&copy; <%= year %>, CSE 340 App</p>
+  <a href="/error">Error Link</a>
 </footer>

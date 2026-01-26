@@ -1,0 +1,133 @@
+<!-- **** Edit-INVENTORY **** -->
+
+<!-- Content Heading -->
+<% if (title) { %>
+<h1><%= title %></h1>
+<% } else { res.redirect('/') } %>
+
+<!-- Message Block -->
+<%- messages() %> <% if (errors) { %>
+<ul class="notice">
+    <% errors.array().forEach(error => { %>
+    <li><%= error.msg %></li>
+    <% }) %>
+</ul>
+<% } %>
+
+<div class="container">
+    <div class="edit-class-container">
+        <form id="updateForm" class="form-container" action="/inv/update" method="post">
+            <div class="input">
+                <label for="classification_id">Edit Classification</label>
+                <%- classificationSelect %>
+            </div>
+            <div class="input">
+                <label for="inv_year">Edit Year</label>
+                <input
+                    type="text"
+                    id="inv_year"
+                    name="inv_year"
+                    pattern="^[0-9]{4}$"
+                    maxlength="4"
+                    placeholder="Enter 4-digit year"
+                    title="Please enter a valid 4-digit year"
+                    value="<%= locals.inv_year %>"
+                    required
+                />
+            </div>
+            <div class="input">
+                <label for="inv_make">Edit Make</label>
+                <input
+                    type="text"
+                    id="inv_make"
+                    name="inv_make"
+                    minlength="3"
+                    placeholder="Min of 3 characters"
+                    title="Please enter a Make"
+                    value="<%= locals.inv_make %>"
+                    required
+                />
+            </div>
+            <div class="input">
+                <label for="inv_model">Edit Model</label>
+                <input
+                    type="text"
+                    id="inv_model"
+                    name="inv_model"
+                    minlength="3"
+                    placeholder="Min of 3 characters"
+                    title="Please enter a model"
+                    value="<%= locals.inv_model %>"
+                    required
+                />
+            </div>
+            <div class="input">
+                <label for="inv_color">Edit Color</label>
+                <input
+                    type="text"
+                    id="inv_color"
+                    name="inv_color"
+                    title="Please enter a color"
+                    value="<%= locals.inv_color %>"
+                    required
+                />
+            </div>
+            <div class="input">
+                <label for="inv_miles">Edit Milage</label>
+                <input
+                    type="text"
+                    id="inv_miles"
+                    name="inv_miles"
+                    pattern="[0-9]*"
+                    placeholder="Enter mileage numbers only"
+                    title="Please enter a valid mileage - numbers only."
+                    value="<%= locals.inv_miles %>"
+                    required
+                />
+            </div>
+            <div class="input">
+                <label for="inv_price">Edit Price</label>
+                <input
+                    type="text"
+                    id="inv_price"
+                    name="inv_price"
+                    pattern="[0-9]*"
+                    placeholder="Enter price numbers only"
+                    title="Please enter a valid price numbers only."
+                    value="<%= locals.inv_price %>"
+                    required
+                />
+            </div>
+            <div class="input">
+                <label for="inv_description">Edit Description</label>
+                <textarea
+                    id="inv_description"
+                    name="inv_description"
+                    style="width: 400px; height: 150px"
+                    placeholder="Add description here...."
+                    title="Please enter a description."
+                    required
+                >
+<%= locals.inv_description %></textarea
+                >
+            </div>
+
+            <div class="input">
+                <label for="inv_image">Edit Image</label>
+                <input type="text" id="inv_image" name="inv_image" value="<%= locals.inv_image %>" />
+            </div>
+            <div class="input">
+                <label for="inv_thumbnail">Edit Thumbnail Image</label>
+                <input type="text" id="inv_thumbnail" name="inv_thumbnail" value="<%= locals.inv_thumbnail %>" />
+            </div>
+
+            <div class="submit-button">
+                <button type="submit" disabled>Update Vehicle</button>
+            </div>
+            <input type="hidden" name="inv_id" <% if (locals.inv_id) { %> value="<%= locals.inv_id %>" <% } %>>
+
+        </form>
+    </div>
+</div>
+
+<script src="/js/inv-update.js"></script>

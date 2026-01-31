@@ -122,13 +122,15 @@ Util.buildDetailsGrid = async function (data) {
 /* **************************************
  * Build Error view HTML
  * ************************************ */
-Util.buildErrorMessage = (heading, quote) => `<section id="error-page">
-    <image src="/images/site/pexels-pixabay-78793.jpg" alt="404 Error Image - broken car" />
-    <div class="error-message">
+Util.buildErrorMessage = (heading, quote) => `
+<section id="error-page">
+  <img src="/images/site/pexels-pixabay-78793.jpg" alt="404 Error Image - broken car" />
+  <div class="error-message">
     <h2>${heading}</h2>
     <p class="notice">${quote}</p>
-    </div>
-    </section>`
+  </div>
+</section>`;
+
 
 /* ************************
  * Constructs the Classification HTML select dropdown

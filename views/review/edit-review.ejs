@@ -1,0 +1,52 @@
+<!-- **** Edit-Review **** -->
+
+<!-- Content Heading -->
+<% if (title) { %>
+    <h1><%= title %></h1>
+    <% } else { res.redirect('/') } %>
+    
+    <!-- Message Block -->
+    <%- messages() %> <% if (errors) { %>
+    <ul class="notice">
+        <% errors.array().forEach(error => { %>
+        <li><%= error.msg %></li>
+        <% }) %>
+    </ul>
+    <% } %>
+    
+    <div class="container">
+        <div class="edit-class-container">
+            <form id="updateReviewForm" class="form-container" action="/review/update-review" method="post">
+               
+                <div class="input">
+                    <label for="review_date">Review Date</label>
+                    <input
+                        type="text"
+                        id="review_date"
+                        name="review_date"
+                        value="<%= locals.review_date %>"
+                        readonly 
+                    />
+                </div>
+                <div class="input">
+                    <label for="review_text">Review Comment</label>
+                    <textarea
+                        id="review_text"
+                        name="review_text"
+                        style="height: 150px"
+                        placeholder="Add review here...."
+                        title="Please enter your review."
+                        required
+                    ><%= locals.review_text %></textarea>
+                </div>
+
+                <div class="submit-button">
+                    <button type="submit" disabled>Update Review</button>
+                </div>
+                <input type="hidden" name="review_id" <% if (locals.review_id) { %> value="<%= locals.review_id %>" <% } %>>
+    
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/review-update.js"></script>

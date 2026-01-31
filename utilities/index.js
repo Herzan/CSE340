@@ -8,70 +8,74 @@ const Util = {}
  * Constructs the nav HTML unordered list
  ************************** */
 Util.getNav = async function (req, res, next) {
-    try {
-        console.log("🔍 Getting navigation data...")
-        let data = await invModel.getClassifications()
-        console.log(`✅ Got ${data.rows.length} classifications from database`)
-
-        let list = '<ul>'
-        list += '<li><a href="/" title="Home page">Home</a></li>'
-
-        data.rows.forEach((row) => {
-            list += '<li>'
-            list +=
-                '<a href="/inv/type/' +
-                row.classification_id +
-                '" title="See our inventory of ' +
-                row.classification_name +
-                ' vehicles">' +
-                row.classification_name +
-                '</a>'
-            list += '</li>'
-        })
-
-        list += '</ul>'
-        console.log("✅ Navigation HTML built successfully")
-        return list
-    } catch (error) {
-        // ✅ FALLBACK: no database, still show pages
-        console.warn('⚠️ Database unavailable — using static navigation:', error.message)
-
-        return `
-        <ul>
-            <li><a href="/" title="Home page">Home</a></li>
-            <li><a href="/inv/type/1" title="Custom vehicles">Custom</a></li>
-            <li><a href="/inv/type/2" title="Sedan vehicles">Sedan</a></li>
-            <li><a href="/inv/type/3" title="SUV vehicles">SUV</a></li>
-            <li><a href="/inv/type/4" title="Truck vehicles">Truck</a></li>
-            <li><a href="/inv/type/5" title="Sport vehicles">Sport</a></li>
-        </ul>`
-    }
+    let data = await invModel.getClassifications()
+    // console.log(data)
+    let list = '<ul>'
+    list += '<li><a href="/" title="Home page">Home</a></li>'
+    data.rows.forEach((row) => {
+        list += '<li>'
+        list +=
+            '<a href="/inv/type/' +
+            row.classification_id +
+            '" title="See our inventory of ' +
+            row.classification_name +
+            ' vehicles">' +
+            row.classification_name +
+            '</a>'
+        list += '</li>'
+    })
+    list += '</ul>'
+    return list
 }
 
 /* **************************************
  * Build the classification view HTML
  * ************************************ */
 Util.buildClassificationGrid = async function (data) {
-  if (!Array.isArray(data) || data.length === 0) {
-    return "<p class='notice'>Sorry, no vehicles found.</p>"
-  }
-
-  let grid = '<ul id="inv-display">'
-
-  data.forEach(vehicle => {
-    grid += `
-      <li>
-        <a href="/inv/detail/${vehicle.inv_id}">
-          <img src="${vehicle.inv_thumbnail}" alt="Image of ${vehicle.inv_make} ${vehicle.inv_model}">
-          <h2>${vehicle.inv_make} ${vehicle.inv_model}</h2>
-          <span>$${new Intl.NumberFormat('en-US').format(vehicle.inv_price)}</span>
-        </a>
-      </li>
-    `
-  })
-
-  grid += '</ul>'
-  return grid
+    let grid
+    if (data.length > 0) {
+        grid = '<ul id="inv-display">'
+        data.forEach((vehicle) => {
+            grid += '<li>'
+            grid +=
+                '<a href="../../inv/detail/' +
+                vehicle.inv_id +
+                '" title="View ' +
+                vehicle.inv_make +
+                ' ' +
+                vehicle.inv_model +
+                'details"><img src="' +
+                vehicle.inv_thumbnail +
+                '" alt="Image of ' +
+                vehicle.inv_make +
+                ' ' +
+                vehicle.inv_model +
+                ' on CSE Motors" /></a>'
+            grid += '<div class="namePrice">'
+            grid += '<hr />'
+            grid += '<h2>'
+            grid +=
+                '<a href="../../inv/detail/' +
+                vehicle.inv_id +
+                '" title="View ' +
+                vehicle.inv_make +
+                ' ' +
+                vehicle.inv_model +
+                ' details">' +
+                vehicle.inv_make +
+                ' ' +
+                vehicle.inv_model +
+                '</a>'
+            grid += '</h2>'
+            grid += '<span>$' + new Intl.NumberFormat('en-US').format(vehicle.inv_price) + '</span>'
+            grid += '</div>'
+            grid += '</li>'
+        })
+        grid += '</ul>'
+    } else {
+        grid += '<p class="notice">Sorry, no matching vehicles could be found.</p>'
+    }
+    return grid
 }
 
 /* **************************************
@@ -130,27 +134,22 @@ Util.buildErrorMessage = (heading, quote) => `<section id="error-page">
  * Constructs the Classification HTML select dropdown
  ************************** */
 Util.buildClassificationDropdown = async function (classification_id) {
-    try {
-        let data = await invModel.getClassifications()
+    let data = await invModel.getClassifications()
+    // console.log(data)
 
-        let option = `<select id="classification_id" name="classification_id" autofocus required>
-            <option value="" disabled selected>Select a classification</option>`
+    // Initialize the list with the opening <select> tag
+    let option = `<select id="classification_id" name="classification_id" autofocus required >
+    <option value="" disabled selected>Select a classification</option>`
 
-        data.rows.forEach((row) => {
-            const isSelected = classification_id === row.classification_id ? 'selected' : ''
-            option += `<option value="${row.classification_id}" ${isSelected}>${row.classification_name}</option>`
-        })
+    // Loop through the rows and add each classification as an <option>
+    data.rows.forEach((row) => {
+        const isSelected = classification_id === row.classification_id ? 'selected' : ''
+        option += `<option value="${row.classification_id}" ${isSelected}>${row.classification_name}</option>`
+    })
 
-        option += `</select>`
-        return option
-    } catch (error) {
-        // ✅ FALLBACK: no DB
-        console.warn('Database unavailable — classification dropdown disabled')
+    option += `</select>`
 
-        return `<select disabled>
-            <option>Database unavailable</option>
-        </select>`
-    }
+    return option
 }
 
 /* ****************************************

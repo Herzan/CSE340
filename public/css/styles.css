@@ -688,12 +688,10 @@ a.submit-button:hover {
     background-color: var(--light-grey);
     color: var(--secondary-color);
 }
-
 #inventoryDisplay th,
 #inventoryDisplay td {
-    padding: 8px 12px;
-    text-align: left;
-    border-bottom: 1px solid var(--medium-grey);
+    /* margin: 5px 0;
+    padding: 5px 0; */
 }
 
 #passWordBtn {

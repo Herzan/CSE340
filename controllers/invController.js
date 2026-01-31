@@ -8,32 +8,17 @@ const invCont = {}
  *  Build inventory by classification view
  * ************************** */
 invCont.buildByClassificationId = async function (req, res, next) {
-  try {
-    const classificationId = req.params.classificationId
-    const data = await invModel.getInventoryByClassificationId(classificationId)
-
-    if (!data || data.length === 0) {
-      return next({
-        status: 404,
-        message: "Unfortunately, we don't have that page in stock."
-      })
-    }
-
+    const classification_id = req.params.classificationId
+    const data = await invModel.getInventoryByClassificationId(classification_id)
     const grid = await utilities.buildClassificationGrid(data)
-    const nav = await utilities.getNav() // ✅ This is already here, but let's check for errors
-
-    res.render("inventory/classification", {
-      title: data[0].classification_name + " Vehicles",
-      nav, // ✅ nav is defined
-      grid
+    let nav = await utilities.getNav()
+    const className = data[0].classification_name
+    res.render('inventory/classification', {
+        title: className + ' vehicles',
+        nav,
+        grid,
+        errors: null,
     })
-  } catch (err) {
-    console.error("Error in buildByClassificationId:", err.message)
-    next({
-      status: 500,
-      message: "Oh no! There was a crash. Maybe try a different route?"
-    })
-  }
 }
 
 /* ***************************
@@ -140,6 +125,7 @@ invCont.addInventory = async function (req, res, next) {
         inv_thumbnail,
         classification_id,
     } = req.body
+    // console.log(req.body)
 
     const regResult = await invModel.addInventory(
         inv_make,
@@ -254,7 +240,7 @@ invCont.updateInventory = async function (req, res, next) {
         req.flash('success', `The ${itemName} was successfully updated.`)
         res.redirect('/inv/')
     } else {
-        const classificationSelect = await utilities.buildClassificationDropdown(classification_id)
+        const classificationSelect = await utilities.buildClassificationList(classification_id)
         const itemName = `${inv_make} ${inv_model}`
         req.flash('notice', 'Sorry, the insert failed.')
         res.status(501).render('inventory/edit-inventory', {
@@ -324,5 +310,6 @@ invCont.deleteInventory = async function (req, res, next) {
         })
     }
 }
+
 
 module.exports = invCont

@@ -1,3 +1,7 @@
+# cse340-starter
+
+This project is for CSE 340 Web Backend Development at BYU-I.  This project is created to develop skills by creating a fictitious car dealership - CSE Motors.
+
 ## Getting Started
 
 This document is intended to get you started quickly in building a backend driven Node.js application complete with pages and content, backend logic and a PostgreSQL database for data storage.
@@ -45,3 +49,14 @@ When you installed Git and cloned the remote repository in week 1, you should ha
 1. Go to http://localhost:5500 in a browser tab. Nothing should be visible as the server has not been setup to repond to that route.
 2. Add "/filename.html" to the end of the URL (replacing filename with the name of the file you moved to the public folder).
 3. You should see that page in the browser.
+
+
+## Frontend Checklist
+
+Some tools to check site for validity after deployment.
+
+- [Test for valid HTML](https://validator.w3.org/)
+- [Test for valid CSS](https://jigsaw.w3.org/css-validator/)
+- [Test for WAVE validation](https://wave.webaim.org/)
+
+

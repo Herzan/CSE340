@@ -1,0 +1,57 @@
+<!-- Content Heading -->
+<% if (title) { %>
+<h1><%= title %></h1>
+<% } else { res.redirect('/') } %>
+
+<!-- Message Block -->
+<%- messages() %> <% if (errors) { %>
+<ul class="notice">
+    <% errors.array().forEach(error => { %>
+    <li><%= error.msg %></li>
+    <% }) %>
+</ul>
+<% } %>
+
+<div class="container">
+    <div class="login-container">
+        <form id="loginForm" class="form-container" action="/account/login" method="post">
+            <div class="input">
+                <label for="account_email">Email</label>
+                <input
+                    type="email"
+                    id="account_email"
+                    name="account_email"
+                    required
+                    value="<%= locals.account_email %>"
+                    pattern="^[a-zA-Z0-9._%±]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$"
+                    title="Enter a valid email address (e.g., user@example.com)"
+                    placeholder="Enter your email"
+                />
+            </div>
+            <div class="input">
+                <label for="account_password">Password</label>
+                <input
+                    type="password"
+                    id="account_password"
+                    name="account_password"
+                    required
+                    pattern="(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{12,}"
+                    title="Password must be at least 12 characters long and include at least one capital letter, one number, and one special character."
+                    placeholder="Enter your secure password"
+                />
+                <p>Password must be at least 12 characters long and include:</p>
+                <ul>
+                    <li>At least one capital letter</li>
+                    <li>At least one number</li>
+                    <li>At least one special character</li>
+                </ul>
+                <span id="passWordBtn">Show Password</span>
+            </div>
+
+            <div class="submit-button">
+                <button type="submit">Login</button>
+            </div>
+            <h3>No Account? <a href="/account/registration">Sign-up</a></h3>
+        </form>
+    </div>
+</div>

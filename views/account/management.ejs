@@ -1,0 +1,36 @@
+<!-- Content Heading -->
+<% if (title) { %>
+<h1><%= title %></h1>
+<% } else { res.redirect('/') } %>
+
+<!-- Message Block -->
+<%- messages() %> <% if (errors) { %>
+<ul class="notice">
+    <% errors.array().forEach(error => { %>
+    <li><%= error.msg %></li>
+    <% }) %>
+</ul>
+<% } %>
+
+<!-- Content Block -->
+<div class="container">
+    <div class="registration-container management">
+        <h2>Welcome <%= locals.accountData.account_firstname %></h2>
+        <h3>You are Logged in!</h3>
+        <a href="/account/update/<%= locals.accountData.account_id %>" class="submit-button">
+            Update Account Information
+        </a>
+        <% if (locals.accountData.account_type === "employee" || locals.accountData.account_type === "admin") { %>
+        <hr />
+        <h4>Inventory Management</h4>
+        <a href="/inv" class="submit-button">Access Inventory Management</a>
+        <% } %>
+    </div>
+</div>
+
+<section class="customer-reviews">
+    <h2>My Reviews</h2>
+
+    <%- myReviews %>
+
+</section>

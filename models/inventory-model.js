@@ -12,28 +12,16 @@ async function getClassifications() {
  * ************************** */
 async function getInventoryByClassificationId(classification_id) {
     try {
-        console.log(`🔍 Model: Fetching vehicles for classification_id: ${classification_id}`)
-        
         const data = await pool.query(
-            `SELECT i.*, c.classification_name 
-             FROM public.inventory AS i 
-             JOIN public.classification AS c 
-             ON i.classification_id = c.classification_id 
-             WHERE i.classification_id = $1 
-             ORDER BY i.inv_make, i.inv_model`,
+            `SELECT * FROM public.inventory AS i 
+      JOIN public.classification AS c 
+      ON i.classification_id = c.classification_id 
+      WHERE i.classification_id = $1`,
             [classification_id]
         )
-        
-        console.log(`🔍 Model: Found ${data.rows.length} vehicles`)
-        
-        if (data.rows.length === 0) {
-            console.log(`⚠️ Model: NO VEHICLES FOUND for classification_id: ${classification_id}`)
-        }
-        
         return data.rows
     } catch (error) {
-        console.error('❌ getInventoryByClassificationId error:', error.message)
-        return []
+        console.error('getInventoryByClassificationId error ' + error)
     }
 }
 
@@ -43,17 +31,15 @@ async function getInventoryByClassificationId(classification_id) {
 async function getInventoryById(inv_id) {
     try {
         const data = await pool.query(
-            `SELECT i.*, c.classification_name 
-             FROM public.inventory AS i 
-             JOIN public.classification AS c 
-             ON i.classification_id = c.classification_id 
-             WHERE i.inv_id = $1`,
+            `SELECT * FROM public.inventory AS i 
+      JOIN public.classification AS c 
+      ON i.classification_id = c.classification_id 
+      WHERE i.inv_id = $1`,
             [inv_id]
         )
         return data.rows
     } catch (error) {
-        console.error('getInventoryById error:', error)
-        return []
+        console.error('getInventoryById error ' + error)
     }
 }
 
@@ -65,7 +51,7 @@ async function addClassification(classification_name) {
         const sql = 'INSERT INTO classification (classification_name) VALUES ($1) RETURNING *'
         return await pool.query(sql, [classification_name])
     } catch (error) {
-        console.error('Database Error:', error.message)
+        console.error('Database Error:', error.message) // Log the error
         return error.message
     }
 }
@@ -79,7 +65,7 @@ async function checkExistingClassification(classification_name) {
         const classification = await pool.query(sql, [classification_name])
         return classification.rowCount
     } catch (error) {
-        console.error('Database Error:', error.message)
+        console.error('Database Error:', error.message) // Log the error
         return error.message
     }
 }
@@ -115,7 +101,7 @@ async function addInventory(
             classification_id,
         ])
     } catch (error) {
-        console.error('Database Error:', error.message)
+        console.error('Database Error:', error.message) // Log the error
         return error.message
     }
 }
@@ -154,8 +140,7 @@ async function updateInventory(
         ])
         return data.rows[0]
     } catch (error) {
-        console.error('model error:', error)
-        return null
+        console.error('model error: ' + error)
     }
 }
 
@@ -168,8 +153,7 @@ async function deleteInventory(inv_id) {
         const data = await pool.query(sql, [inv_id])
         return data
     } catch (error) {
-        console.error('Delete Inventory Error:', error)
-        return null
+        new Error('Delete Inventory Error')
     }
 }
 

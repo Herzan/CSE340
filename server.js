@@ -1,116 +1,151 @@
 /* ******************************************
- * This server.js file is the primary file of the
- * application. It is used to control the project.
+ * server.js
+ * Primary application controller
  *******************************************/
+
 /* ***********************
  * Require Statements
  *************************/
-const express = require('express')
-const expressLayouts = require('express-ejs-layouts')
-const env = require('dotenv').config()
-const app = express()
-const session = require('express-session')
-const pool = require('./database/')
-const utilities = require('./utilities/')
-const baseController = require('./controllers/baseController')
-const static = require('./routes/static')
-const inventoryRoute = require('./routes/inventoryRoute')
-const accountRoute = require('./routes/accountRoute')
-const reviewRoute = require('./routes/reviewRoute')
-const errorRoute = require('./routes/errorRoute')
-const bodyParser = require('body-parser')
-const cookieParser = require("cookie-parser")
+// Core & third-party
+const express = require("express");
+const expressLayouts = require("express-ejs-layouts");
+const session = require("express-session");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const flash = require("connect-flash");
+const dotenv = require("dotenv").config();
+
+// Database & session store
+const pgSession = require("connect-pg-simple")(session);
+const pool = require("./database/");
+
+// Routes & controllers
+const staticRoutes = require("./routes/static");
+const inventoryRoute = require("./routes/inventoryRoute");
+const accountRoute = require("./routes/accountRoute");
+const baseController = require("./controllers/baseController");
+
+// Utilities
+const utilities = require("./utilities");
+
+// App init
+const app = express();
 
 /* ***********************
- * Middleware
- * ************************/
-app.use(
-    session({
-        store: new (require('connect-pg-simple')(session))({
-            createTableIfMissing: true,
-            pool,
-        }),
-        secret: process.env.SESSION_SECRET,
-        resave: true,
-        saveUninitialized: true,
-        name: 'sessionId',
-    })
-)
-
-// Express Messages Middleware
-app.use(require('connect-flash')())
-app.use(function (req, res, next) {
-    res.locals.messages = require('express-messages')(req, res)
-    next()
-})
-
-app.use(bodyParser.json())
-app.use(cookieParser())
-app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
-app.use(utilities.checkJWTToken)
-
-/* ***********************
- * View Engine and Templates
+ * Trust proxy (RENDER)
  *************************/
-app.set('view engine', 'ejs')
-app.use(expressLayouts)
-app.set('layout', './layouts/layout') // not at views root
+app.set("trust proxy", 1);
+
+/* ***********************
+ * Session Middleware
+ *************************/
+app.use(
+  session({
+    store: new pgSession({
+      pool,
+      createTableIfMissing: true,
+    }),
+    name: "cse340.sid",
+  secret: "mySuperSecret123!", // ⚡ REQUIRED
+  resave: false,               // don't save session if unmodified
+  saveUninitialized: true,     // save uninitialized sessions
+  cookie: { secure: false }    // true if using HTTPS
+  })
+);
+
+/* ***********************
+ * Flash Messages
+ *************************/
+app.use(flash());
+app.use((req, res, next) => {
+  res.locals.messages = require("express-messages")(req, res);
+  next();
+});
+
+/* ***********************
+ * Body & Cookie Parsers
+ *************************/
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+/* ***********************
+ * JWT Middleware
+ *************************/
+app.use(utilities.checkJWTToken);
+
+/* ***********************
+ * View Engine
+ *************************/
+app.set("view engine", "ejs");
+app.use(expressLayouts);
+app.set("layout", "./layouts/layout");
 
 /* ***********************
  * Routes
  *************************/
-app.use(static)
-// Index route
-app.get('/', utilities.handleErrors(baseController.buildHome))
-// Inventory routes
-app.use('/inv', utilities.handleErrors(inventoryRoute))
-// Account routes
-app.use('/account', utilities.handleErrors(accountRoute))
-// Review routes
-app.use('/review', utilities.handleErrors(reviewRoute))
-// Error routes
-app.use('/error', utilities.handleErrors(errorRoute))
+// Static files
+app.use(staticRoutes);
 
-// File Not Found Route - must be last route in list
-app.use(async (req, res, next) => {
-    const heading = 'You seem to have lost a few parts?'
-    const quote = `Sorry, we couldn't find the page you're looking for :-( <br> But you could try any of the pages in the menu-bar.`
-    next({ status: 404, message: utilities.buildErrorMessage(heading, quote) })
-})
+// Home
+app.get("/", utilities.handleErrors(baseController.buildHome));
+
+// Inventory
+app.use("/inv", inventoryRoute);
+
+// Account
+app.use("/account", accountRoute);
+
 /* ***********************
- * Express Error Handler
- * Place after all other middleware
+ * 404 Handler (LAST ROUTE)
+ *************************/
+app.use(async (req, res, next) => {
+  let nav;
+  try {
+    nav = await utilities.getNav();
+  } catch {
+    nav = '<ul><li><a href="/">Home</a></li></ul>';
+  }
+
+  next({
+    status: 404,
+    message: "Unfortunately, we don't have that page in stock.",
+    nav,
+  });
+});
+
+/* ***********************
+ * Global Error Handler
  *************************/
 app.use(async (err, req, res, next) => {
-    let nav = await utilities.getNav()
-    let title
-    let message
-    console.error(`Error at: "${req.originalUrl}": ${err.status || 500}`)
-    if (err.status === 404) {
-        title = `${err.status} - PAGE NOT FOUND`
-        message = err.message
-    } else {
-        title = `500 - INTERNAL SERVER ERROR`
-        const heading = 'Oh no! There was a crash!'
-        const quote = ` Maybe try watching where you are going next time?`
-        message = utilities.buildErrorMessage(heading, quote)
-    }
-    res.render('errors/error', {
-        title,
-        message,
-        nav,
-    })
-})
-/* ***********************
- * Local Server Information
- * Values from .env (environment) file
- *************************/
-const port = process.env.PORT
-const host = process.env.HOST
+  let nav;
+  try {
+    nav = await utilities.getNav();
+  } catch {
+    nav = '<ul><li><a href="/">Home</a></li></ul>';
+  }
+
+  console.error(`Error at "${req.originalUrl}": ${err.message}`);
+
+  res.status(err.status || 500).render("errors/error", {
+    title: err.status || "Server Error",
+    message:
+      err.status === 404
+        ? err.message
+        : "Oh no! There was a crash. Please try again later.",
+    nav: err.nav || nav,
+  });
+});
 
 /* ***********************
- * Log statement to confirm server operation
+ * Server Info
+ *************************/
+const port = process.env.PORT || 5500;
+const host = process.env.HOST || "localhost";
+
+/* ***********************
+ * Start Server
  *************************/
 app.listen(port, () => {
-    console.log(`app listening on ${host}:${port}`)
-})
+  console.log(`🚀 App running on ${host}:${port}`);
+});

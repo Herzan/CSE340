@@ -340,5 +340,7 @@ invCont.buildManagement = async function (req, res) {
   })
 }
 
-
+/* ***************************
+ *  End
+ * ************************** */
 module.exports = invCont

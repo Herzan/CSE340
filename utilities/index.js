@@ -131,27 +131,34 @@ Util.buildErrorMessage = (heading, quote) => `
   </div>
 </section>`;
 
-
 /* ************************
  * Constructs the Classification HTML select dropdown
  ************************** */
-Util.buildClassificationDropdown = async function (classification_id) {
-    let data = await invModel.getClassifications()
-    // console.log(data)
+Util.buildClassificationList = async function (classification_id = null) {
+  const data = await invModel.getClassifications()
 
-    // Initialize the list with the opening <select> tag
-    let option = `<select id="classification_id" name="classification_id" autofocus required >
-    <option value="" disabled selected>Select a classification</option>`
+  let select = `
+    <select 
+      id="classification_id" 
+      name="classification_id" 
+      required
+    >
+      <option value="" disabled ${!classification_id ? 'selected' : ''}>
+        Choose a Classification
+      </option>
+  `
 
-    // Loop through the rows and add each classification as an <option>
-    data.rows.forEach((row) => {
-        const isSelected = classification_id === row.classification_id ? 'selected' : ''
-        option += `<option value="${row.classification_id}" ${isSelected}>${row.classification_name}</option>`
-    })
+  data.rows.forEach((row) => {
+    const selected = Number(classification_id) === row.classification_id ? 'selected' : ''
+    select += `
+      <option value="${row.classification_id}" ${selected}>
+        ${row.classification_name}
+      </option>
+    `
+  })
 
-    option += `</select>`
-
-    return option
+  select += `</select>`
+  return select
 }
 
 /* ****************************************

@@ -1,39 +1,14 @@
-<!-- **** MANAGEMENT **** -->
+<h1>Vehicle Management</h1>
 
-<!-- Content Heading -->
-<% if (title) { %>
-<h1><%= title %></h1>
-<% } else { res.redirect('/') } %>
-
-<!-- Message Block -->
-<%- messages() %> <% if (errors) { %>
-<ul class="notice">
-    <% errors.array().forEach(error => { %>
-    <li><%= error.msg %></li>
-    <% }) %>
-</ul>
+<% if (message && message.length > 0) { %>
+  <p class="notice"><%= message %></p>
 <% } %>
 
-<!-- Content Block -->
-<div class="container">
-    <div class="management-container">
-        <!-- Add New Classification View TASK 2 -->
-        <a href="/inv/add-classification" class="submit-button">Add New Classification</a>
-        <!-- Add New Inventory View TASK 3 -->
-        <a href="/inv/add-inventory" class="submit-button">Add New Inventory</a>
-    </div>
-    <section class="management-container">
-        <h2>Manage Inventory</h2>
-        <p>Select a classification from the list to see the items belonging to the classification.</p>
-        <div class="input">
-            <label for="classification_id">Classification List</label>
-            <%- classificationSelect %>
-        </div>
-        
-
-        <table id="inventoryDisplay"></table>
-        <noscript>JavaScript must be enabled to use this page.</noscript>
-    </section>
-</div>
-
-<script src="/js/inventory.js"></script>
+<ul>
+  <li>
+    <a href="/inv/add-classification">Add New Classification</a>
+  </li>
+  <li>
+    <a href="/inv/add-inventory">Add New Vehicle</a>
+  </li>
+</ul>

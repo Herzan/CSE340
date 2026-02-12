@@ -3,11 +3,7 @@
 <h1>Add Classification</h1>
 
 <!-- Flash Messages -->
-<% if (messages && messages.length > 0) { %>
-  <div class="notice">
-    <%= messages %>
-  </div>
-<% } %>
+<%- messages() %>
 
 <!-- Validation Errors -->
 <% if (errors) { %>

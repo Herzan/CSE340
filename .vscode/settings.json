@@ -6,24 +6,12 @@
                     "rejectUnauthorized": true
                 }
             },
-            "previewLimit": 50,
-            "server": "localhost",
-            "driver": "PostgreSQL",
-            "name": "CSE340-Render",
-            "connectString": "postgresql://cse340:PULiKgFlGU6CTdOc07yv3i9YGkxK25Fp@dpg-csjb7pdsvqrc73eqft4g-a.oregon-postgres.render.com/cse340_gp61"
-        },
-        {
-            "pgOptions": {
-                "ssl": {
-                    "rejectUnauthorized": true
-                }
-            },
             "ssh": "Disabled",
             "previewLimit": 50,
             "server": "localhost",
             "driver": "PostgreSQL",
             "name": "render.com",
-            "connectString": "postgresql://demohh:2EziAKNAZLYmYZDDBy3u0eRm5xjEpUWz@dpg-d5hbknchg0os73ft3j0g-a.virginia-postgres.render.com/demohh"
+            "connectString": "postgresql://demonhh:XCAPiYhYPH1J1dOxCqmBPkKoy9ROZsph@dpg-d658dncr85hc73dv3chg-a.virginia-postgres.render.com/demonhh"
         }
     ]
 }

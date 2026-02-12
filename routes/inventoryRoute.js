@@ -1,39 +1,40 @@
 // Needed Resources
-const express = require('express')
+const express = require("express")
 const router = new express.Router()
-const invController = require('../controllers/invController')
-const revController = require('../controllers/reviewController')
-const utilities = require('../utilities/')
-const regValidate = require('../utilities/inventory-validation')
+const invController = require("../controllers/invController")
+const revController = require("../controllers/reviewController")
+const utilities = require("../utilities/")
+const regValidate = require("../utilities/inventory-validation")
+const accMiddleware = require("../utilities/auth-middleware")
 
 // Build inventory by classification view
 router.get(
-  '/type/:classificationId',
+  "/type/:classificationId",
   utilities.handleErrors(invController.buildByClassificationId)
+)
+
+// Inventory Management view (PROTECTED – MAIN)
+router.get(
+  "/",
+  accMiddleware.checkEmployeeOrAdmin,
+  utilities.handleErrors(invController.buildManagement)
 )
 
 // Build details by Inventory ID view
 router.get(
-  '/detail/:inventoryId',
+  "/detail/:inventoryId",
   utilities.handleErrors(invController.buildByInventoryID)
 )
 
-// Inventory Management view (MAIN)
-router.get(
-  "/",
-  utilities.handleErrors(invController.buildManagement)
-)
-
-
 // Add Classification view
 router.get(
-  '/add-classification',
+  "/add-classification",
   utilities.handleErrors(invController.buildByAddClassification)
 )
 
-// Process Add Classification (ONLY ONE)
+// Process Add Classification
 router.post(
-  '/add-classification',
+  "/add-classification",
   regValidate.classificationRules(),
   regValidate.checkClassificationData,
   utilities.handleErrors(invController.addClassification)
@@ -41,13 +42,13 @@ router.post(
 
 // Add Inventory view
 router.get(
-  '/add-inventory',
+  "/add-inventory",
   utilities.handleErrors(invController.buildByAddInventory)
 )
 
 // Process Add Inventory
 router.post(
-  '/add-inventory',
+  "/add-inventory",
   regValidate.inventoryRules(),
   regValidate.checkInventoryData,
   utilities.handleErrors(invController.addInventory)
@@ -55,21 +56,21 @@ router.post(
 
 // Get inventory JSON
 router.get(
-  '/getInventory/:classification_id',
+  "/getInventory/:classification_id",
   utilities.checkAccountType,
   utilities.handleErrors(invController.getInventoryJSON)
 )
 
 // Edit Inventory view
 router.get(
-  '/edit/:inventoryId',
+  "/edit/:inventoryId",
   utilities.checkAccountType,
   utilities.handleErrors(invController.buildByEditInventory)
 )
 
 // Update Inventory
 router.post(
-  '/update',
+  "/update",
   regValidate.inventoryRules(),
   regValidate.checkInventoryData,
   utilities.handleErrors(invController.updateInventory)
@@ -77,14 +78,14 @@ router.post(
 
 // Delete Inventory view
 router.get(
-  '/delete/:inventoryId',
+  "/delete/:inventoryId",
   utilities.checkAccountType,
   utilities.handleErrors(invController.buildByDeleteInventory)
 )
 
 // Process Delete Inventory
 router.post(
-  '/delete',
+  "/delete",
   utilities.handleErrors(invController.deleteInventory)
 )
 

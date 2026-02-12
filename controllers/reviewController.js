@@ -1,182 +1,216 @@
-const invModel = require('../models/inventory-model')
-const reviewModel = require('../models/review-model')
-const utilities = require('../utilities/')
+const invModel = require('../models/inventory-model');
+const reviewModel = require('../models/review-model');
+const utilities = require('../utilities/');
 
-const revCont = {}
+const reviewController = {};
 
 /* ***************************
  *  Add Customer Review
- * ************************** */
-revCont.addCustomerReview = async function (req, res, next) {
-    const { inv_id, account_id, review_text } = req.body
+ *************************** */
+reviewController.addCustomerReview = async function (req, res) {
+  const { inv_id, account_id, review_text } = req.body;
 
-    const regResult = await reviewModel.addCustomerReview(inv_id, account_id, review_text)
-    const data = await invModel.getInventoryById(inv_id)
-    const reviewData = await reviewModel.getReviewsById(inv_id)
-    const customerReviews = await utilities.buildReviews(reviewData)
-    const grid = await utilities.buildDetailsGrid(data)
-    let nav = await utilities.getNav()
-    const className = `${data[0].inv_year} ${data[0].inv_make} ${data[0].inv_model}`
+  const reviewResult = await reviewModel.addCustomerReview(
+    inv_id,
+    account_id,
+    review_text?.trim() || ''
+  );
 
-    if (regResult) {
-        req.flash('success', `Success, your review has been added.`)
-        res.render('inventory/details', {
-            title: className,
-            nav,
-            grid,
-            customerReviews,
-            inv_id,
-            account_id,
-            errors: null,
-        })
-    } else {
-        req.flash('notice', 'Sorry, adding inventory failed.')
-        res.render('inventory/details', {
-            title: className,
-            nav,
-            grid,
-            customerReviews,
-            inv_id,
-            account_id,
-            errors: null,
-        })
-    }
-}
+  const vehicleData = await invModel.getInventoryById(inv_id);
+  const reviewData = await reviewModel.getReviewsById(inv_id);
+  const customerReviews = await utilities.buildReviews(reviewData);
+  const grid = await utilities.buildDetailsGrid(vehicleData);
 
-/* ***********************
- * Deliver Update Review View
- *************************/
-revCont.updateReviewView = async function (req, res) {
-    const options = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    }
-    let nav = await utilities.getNav()
-    const account_id = res.locals.accountData?.account_id ? parseInt(res.locals.accountData.account_id) : null
-    const myReviewData = await reviewModel.getReviewsByIdOnly(account_id)
-    const myReviews = await utilities.buildMyReviews(myReviewData)
-    const review_id = parseInt(req.params.reviewId)
-    const reviewData = await reviewModel.getReviewsByReviewID(review_id)
-    const review = reviewData[0]
-    const itemName = `${review.inv_year} ${review.inv_make} ${review.inv_model}`
+  const nav = await utilities.getNav();
+  const className = vehicleData?.[0]
+    ? `${vehicleData[0].inv_year} ${vehicleData[0].inv_make} ${vehicleData[0].inv_model}`
+    : 'Vehicle Details';
 
-    if (!reviewData || reviewData.length === 0) {
-        req.flash('notice', 'Sorry, review not found.')
-        res.render('account/management', {
-            title: 'Account Management',
-            nav,
-            myReviews,
-            errors: null,
-        })
-    } else {
-        res.render('review/edit-review', {
-            title: `Edit ${itemName} Review`,
-            nav,
-            review,
-            review_date: review.review_date.toLocaleDateString('en-US', options),
-            review_text: review.review_text,
-            review_id: review.review_id,
-            errors: null,
-        })
-    }
-}
+  if (reviewResult) {
+    req.flash('success', 'Your review has been successfully added.');
+    return res.render('inventory/details', {
+      title: className,
+      nav,
+      grid,
+      customerReviews,
+      inv_id,
+      account_id,
+      errors: null,
+    });
+  }
+
+  req.flash('notice', 'Sorry, failed to add your review. Please try again.');
+  return res.render('inventory/details', {
+    title: className,
+    nav,
+    grid,
+    customerReviews,
+    inv_id,
+    account_id,
+    errors: null,
+  });
+};
+
+/* ***************************
+ *  Deliver Update Review View
+ *************************** */
+reviewController.updateReviewView = async function (req, res) {
+  const review_id = parseInt(req.params.reviewId, 10);
+  const account_id = res.locals.accountData?.account_id
+    ? parseInt(res.locals.accountData.account_id, 10)
+    : null;
+
+  const nav = await utilities.getNav();
+  const myReviewData = await reviewModel.getReviewsByIdOnly(account_id);
+  const myReviews = await utilities.buildMyReviews(myReviewData);
+
+  const reviewData = await reviewModel.getReviewsByReviewID(review_id);
+
+  if (!reviewData || reviewData.length === 0) {
+    req.flash('notice', 'Review not found.');
+    return res.render('account/management', {
+      title: 'Account Management',
+      nav,
+      myReviews,
+      errors: null,
+    });
+  }
+
+  const review = reviewData[0];
+  const itemName = `${review.inv_year} ${review.inv_make} ${review.inv_model}`;
+
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+
+  return res.render('review/edit-review', {
+    title: `Edit Review – ${itemName}`,
+    nav,
+    review,
+    review_date: review.review_date.toLocaleDateString('en-US', options),
+    review_text: review.review_text,
+    review_id: review.review_id,
+    errors: null,
+  });
+};
 
 /* ***************************
  *  Update Review Data
- * ************************** */
-revCont.updateReview = async function (req, res, next) {
-    let nav = await utilities.getNav()
-    const { review_text, review_id } = req.body
-    const reviewID = parseInt(review_id)
-    const updateResult = await reviewModel.updateReviews(review_text, reviewID)
-    const invData = await invModel.getInventoryById(updateResult.inv_id)
-    const itemName = `${invData[0].inv_year} ${invData[0].inv_make} ${invData[0].inv_model}`
-    if (updateResult) {
-        req.flash('success', `The ${itemName} was successfully updated.`)
-        res.redirect('/account/')
-    } else {
-        req.flash('notice', 'Sorry, the review update failed.')
-        res.render('review/edit-review', {
-            title: `Edit ${itemName} Review`,
-            nav,
-            review,
-            review_date: review.review_date.toLocaleDateString('en-US', options),
-            review_text: review.review_text,
-            errors: null,
-        })
-    }
-}
+ *************************** */
+reviewController.updateReview = async function (req, res) {
+  const { review_text, review_id } = req.body;
+  const reviewID = parseInt(review_id, 10);
+  const newReviewText = review_text?.trim() || '';
 
-/* ***********************
- * Deliver Delete Review View
- *************************/
-revCont.deleteReviewView = async function (req, res) {
-    const options = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    }
-    let nav = await utilities.getNav()
-    const account_id = res.locals.accountData?.account_id ? parseInt(res.locals.accountData.account_id) : null
-    const myReviewData = await reviewModel.getReviewsByIdOnly(account_id)
-    const myReviews = await utilities.buildMyReviews(myReviewData)
-    const review_id = parseInt(req.params.reviewId)
-    const reviewData = await reviewModel.getReviewsByReviewID(review_id)
-    const review = reviewData[0]
-    const itemName = `${review.inv_year} ${review.inv_make} ${review.inv_model}`
+  const updateResult = await reviewModel.updateReviews(newReviewText, reviewID);
 
-    if (!reviewData || reviewData.length === 0) {
-        req.flash('notice', 'Sorry, review not found.')
-        res.render('account/management', {
-            title: 'Account Management',
-            nav,
-            myReviews,
-            errors: null,
-        })
-    } else {
-        res.render('review/delete-review', {
-            title: `Delete ${itemName} Review`,
-            nav,
-            review,
-            review_date: review.review_date.toLocaleDateString('en-US', options),
-            review_text: review.review_text,
-            review_id: review.review_id,
-            errors: null,
-        })
-    }
-}
+  const nav = await utilities.getNav();
+
+  if (updateResult && updateResult.inv_id) {
+    const invData = await invModel.getInventoryById(updateResult.inv_id);
+    const itemName = invData?.[0]
+      ? `${invData[0].inv_year} ${invData[0].inv_make} ${invData[0].inv_model}`
+      : 'Vehicle';
+
+    req.flash('success', `Your review for ${itemName} was successfully updated.`);
+    return res.redirect('/account/');
+  }
+
+  // ── Failure path ── re-fetch review data for re-render
+  const reviewData = await reviewModel.getReviewsByReviewID(reviewID);
+
+  if (!reviewData || reviewData.length === 0) {
+    req.flash('notice', 'Review not found.');
+    return res.redirect('/account/');
+  }
+
+  const review = reviewData[0];
+  const itemName = `${review.inv_year} ${review.inv_make} ${review.inv_model}`;
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+
+  req.flash('notice', 'Sorry, the review update failed. Please try again.');
+  return res.render('review/edit-review', {
+    title: `Edit Review – ${itemName}`,
+    nav,
+    review,
+    review_date: review.review_date.toLocaleDateString('en-US', options),
+    review_text: newReviewText,           // preserve what user typed
+    review_id: reviewID,
+    errors: null,
+  });
+};
+
+/* ***************************
+ *  Deliver Delete Review View
+ *************************** */
+reviewController.deleteReviewView = async function (req, res) {
+  const review_id = parseInt(req.params.reviewId, 10);
+  const account_id = res.locals.accountData?.account_id
+    ? parseInt(res.locals.accountData.account_id, 10)
+    : null;
+
+  const nav = await utilities.getNav();
+  const myReviewData = await reviewModel.getReviewsByIdOnly(account_id);
+  const myReviews = await utilities.buildMyReviews(myReviewData);
+
+  const reviewData = await reviewModel.getReviewsByReviewID(review_id);
+
+  if (!reviewData || reviewData.length === 0) {
+    req.flash('notice', 'Review not found.');
+    return res.render('account/management', {
+      title: 'Account Management',
+      nav,
+      myReviews,
+      errors: null,
+    });
+  }
+
+  const review = reviewData[0];
+  const itemName = `${review.inv_year} ${review.inv_make} ${review.inv_model}`;
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+
+  return res.render('review/delete-review', {
+    title: `Delete Review – ${itemName}`,
+    nav,
+    review,
+    review_date: review.review_date.toLocaleDateString('en-US', options),
+    review_text: review.review_text,
+    review_id: review.review_id,
+    errors: null,
+  });
+};
 
 /* ***************************
  *  Delete Review Data
- * ************************** */
-revCont.deleteReview = async function (req, res, next) {
-    const { review_id } = req.body
-    const reviewID = parseInt(review_id)
-    const updateResult = await reviewModel.deleteReview(reviewID)
-    let nav = await utilities.getNav()
-    const account_id = res.locals.accountData?.account_id ? parseInt(res.locals.accountData.account_id) : null
-    const myReviewData = await reviewModel.getReviewsByIdOnly(account_id)
-    const myReviews = await utilities.buildMyReviews(myReviewData)
-    
+ *************************** */
+reviewController.deleteReview = async function (req, res) {
+  const { review_id } = req.body;
+  const reviewID = parseInt(review_id, 10);
 
-    if (updateResult) {
-        req.flash('success', `The review was successfully deleted.`)
-        res.render('account/management', {
-            title: 'Account Management',
-            nav,
-            myReviews,
-            errors: null,
-        })
-    } else {
-        req.flash('notice', 'Sorry, review not found.')
-        res.render('account/management', {
-            title: 'Account Management',
-            nav,
-            myReviews,
-            errors: null,
-        })
-    }
-}
+  const deleteResult = await reviewModel.deleteReview(reviewID);
 
-module.exports = revCont
+  const nav = await utilities.getNav();
+  const account_id = res.locals.accountData?.account_id
+    ? parseInt(res.locals.accountData.account_id, 10)
+    : null;
+  const myReviewData = await reviewModel.getReviewsByIdOnly(account_id);
+  const myReviews = await utilities.buildMyReviews(myReviewData);
+
+  if (deleteResult) {
+    req.flash('success', 'The review was successfully deleted.');
+    return res.render('account/management', {
+      title: 'Account Management',
+      nav,
+      myReviews,
+      errors: null,
+    });
+  }
+
+  req.flash('notice', 'Sorry, the review could not be deleted (it may not exist).');
+  return res.render('account/management', {
+    title: 'Account Management',
+    nav,
+    myReviews,
+    errors: null,
+  });
+};
+
+module.exports = reviewController;

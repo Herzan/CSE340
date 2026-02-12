@@ -76,3 +76,4 @@ validate.checkReviewData = async (req, res, next) => {
 }
 
 module.exports = validate
+

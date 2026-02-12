@@ -1,36 +1,30 @@
-<!-- Content Heading -->
-<% if (title) { %>
-<h1><%= title %></h1>
-<% } else { res.redirect('/') } %>
+<main>
+  <% if (title) { %><h1><%= title %></h1><% } %>
 
-<!-- Message Block -->
-<%- messages() %> <% if (errors) { %>
-<ul class="notice">
-    <% errors.array().forEach(error => { %>
-    <li><%= error.msg %></li>
-    <% }) %>
-</ul>
-<% } %>
+  <%- messages() %>
 
-<!-- Content Block -->
-<div class="container">
+  <div class="container">
     <div class="registration-container management">
-        <h2>Welcome <%= locals.accountData.account_firstname %></h2>
-        <h3>You are Logged in!</h3>
-        <a href="/account/update/<%= locals.accountData.account_id %>" class="submit-button">
-            Update Account Information
+      <h2>Welcome <%= accountData.account_firstname %></h2>
+
+      <p>
+        <a href="/account/update/<%= accountData.account_id %>" class="submit-button">
+          Edit Account Information
         </a>
-        <% if (locals.accountData.account_type === "employee" || locals.accountData.account_type === "admin") { %>
-        <hr />
-        <h4>Inventory Management</h4>
-        <a href="/inv" class="submit-button">Access Inventory Management</a>
-        <% } %>
+      </p>
+
+      <% if (accountData.account_type === "Employee" || accountData.account_type === "Admin") { %>
+        <hr>
+        <h3>Inventory Management</h3>
+        <p>
+          <a href="/inv/" class="submit-button">Manage Inventory</a>
+        </p>
+      <% } %>
     </div>
-</div>
+  </div>
 
-<section class="customer-reviews">
+  <section class="customer-reviews">
     <h2>My Reviews</h2>
-
     <%- myReviews %>
-
-</section>
+  </section>
+</main>

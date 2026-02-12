@@ -1,4 +1,4 @@
->   BEGIN;
+BEGIN;
 
 -- ================================
 -- CLEANUP
@@ -210,36 +210,36 @@ INSERT INTO public.inventory (
 -- ================================
 -- INSERT SAMPLE ACCOUNTS
 -- ================================
--- Password for all accounts: "password123"
+-- Password for all accounts: "Adm1n$2025al"
 INSERT INTO public.account (
     account_firstname, account_lastname, account_email,
     account_password, account_type, created_at
 ) VALUES
 -- Admin Account
 ('System', 'Administrator', 'admin@cse340.com',
- '$2a$10$N7B3Z8s9cTqYwVhLmNpQReKjK8S2M3X4V5B6n7C8d9e0f1g2h3i4j5',
+ '$2b$12$MNm30dBULKDaGJJ0ipvKOu8/JKSncYI9dpq2nSaamcbVy9CFFm6u2',
  'Admin', NOW() - INTERVAL '30 days'),
 
 -- Employee Accounts
 ('Sarah', 'Johnson', 'sarah.j@cse340.com',
- '$2a$10$N7B3Z8s9cTqYwVhLmNpQReKjK8S2M3X4V5B6n7C8d9e0f1g2h3i4j5',
+ '$2b$12$MNm30dBULKDaGJJ0ipvKOu8/JKSncYI9dpq2nSaamcbVy9CFFm6u2',
  'Employee', NOW() - INTERVAL '15 days'),
 
 ('Michael', 'Chen', 'michael.c@cse340.com',
- '$2a$10$N7B3Z8s9cTqYwVhLmNpQReKjK8S2M3X4V5B6n7C8d9e0f1g2h3i4j5',
+ '$2b$12$MNm30dBULKDaGJJ0ipvKOu8/JKSncYI9dpq2nSaamcbVy9CFFm6u2',
  'Employee', NOW() - INTERVAL '10 days'),
 
 -- Client Accounts
 ('John', 'Doe', 'john.doe@example.com',
- '$2a$10$N7B3Z8s9cTqYwVhLmNpQReKjK8S2M3X4V5B6n7C8d9e0f1g2h3i4j5',
+ '$2b$12$MNm30dBULKDaGJJ0ipvKOu8/JKSncYI9dpq2nSaamcbVy9CFFm6u2',
  'Client', NOW() - INTERVAL '5 days'),
 
 ('Emma', 'Wilson', 'emma.wilson@example.com',
- '$2a$10$N7B3Z8s9cTqYwVhLmNpQReKjK8S2M3X4V5B6n7C8d9e0f1g2h3i4j5',
+ '$2b$12$MNm30dBULKDaGJJ0ipvKOu8/JKSncYI9dpq2nSaamcbVy9CFFm6u2',
  'Client', NOW() - INTERVAL '2 days'),
 
 ('Robert', 'Smith', 'robert.smith@example.com',
- '$2a$10$N7B3Z8s9cTqYwVhLmNpQReKjK8S2M3X4V5B6n7C8d9e0f1g2h3i4j5',
+ '$2b$12$MNm30dBULKDaGJJ0ipvKOu8/JKSncYI9dpq2nSaamcbVy9CFFm6u2',
  'Client', NOW() - INTERVAL '1 day');
 
 -- ================================
@@ -368,11 +368,11 @@ COMMIT;
 -- POST-SETUP INSTRUCTIONS
 -- ================================
 SELECT '=== IMPORTANT NOTES ===' AS message;
-SELECT '1. Admin login: admin@cse340.com / password123' AS note
+SELECT '1. Admin login: admin@cse340.com / Adm1n$2025al' AS note
 UNION ALL
-SELECT '2. Employee login: sarah.j@cse340.com / password123'
+SELECT '2. Employee login: sarah.j@cse340.com / Adm1n$2025al'
 UNION ALL
-SELECT '3. Client login: john.doe@example.com / password123'
+SELECT '3. Client login: john.doe@example.com / Adm1n$2025al'
 UNION ALL
 SELECT '4. Access inventory management at: /inv/ (requires Admin/Employee login)'
 UNION ALL

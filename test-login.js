@@ -28,5 +28,5 @@ async function testLogin(email, password) {
 }
 
 // TRY PASSWORDS
-testLogin('admin@cse340.com', 'Admin123!')
+testLogin('admin@cse340.com', 'Adm1n$2025al')
 

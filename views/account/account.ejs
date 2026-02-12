@@ -1,0 +1,15 @@
+<h1>Account Management</h1>
+
+<p>Welcome <%= accountData.account_firstname %></p>
+<p>You’re logged in.</p>
+
+<p>
+  <a href="/account/update">Edit Account Information</a>
+</p>
+
+<% if (accountData.account_type === "Employee" || accountData.account_type === "Admin") { %>
+  <h2>Inventory Management</h2>
+  <p>
+    <a href="/inv/">Manage Inventory</a>
+  </p>
+<% } %>

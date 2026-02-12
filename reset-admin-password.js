@@ -8,7 +8,7 @@ const pool = new Pool({
 })
 
 async function resetPassword() {
-  const newHash = await bcrypt.hash('Admin123!', 10)
+  const newHash = await bcrypt.hash('Adm1n$2025al', 10)
 
   await pool.query(
     `UPDATE account
@@ -17,7 +17,7 @@ async function resetPassword() {
     [newHash]
   )
 
-  console.log('✅ Admin password reset to: Admin123!')
+  console.log('✅ Admin password reset to: Adm1n$2025al')
   await pool.end()
 }
 

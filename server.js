@@ -146,7 +146,7 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
   const nav = res.locals.nav || '<ul><li><a href="/">Home</a></li></ul>';
 
-  console.error(`Error at "${req.originalUrl}": ${err.message}`);
+  console.error('Global Error:', err.message, err.stack);
 
   res.status(err.status || 500).render("errors/error", {
     title: err.status || "Server Error",

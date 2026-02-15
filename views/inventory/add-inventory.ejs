@@ -33,13 +33,13 @@
   <div class="input">
     <label for="inv_make">Make</label>
     <input
-      type="text"
-      id="inv_make"
-      name="inv_make"
-      minlength="3"
-      placeholder="Min 3 characters"
-      value="<%= inv_make || '' %>"
-      required
+     type="text"
+  id="inv_make"
+  name="inv_make"
+  minlength="3"
+  placeholder="Min 3 characters"
+  value="<%= locals.inv_make || '' %>"
+  required
     />
   </div>
 
@@ -47,13 +47,13 @@
   <div class="input">
     <label for="inv_model">Model</label>
     <input
-      type="text"
-      id="inv_model"
-      name="inv_model"
-      minlength="3"
-      placeholder="Min 3 characters"
-      value="<%= inv_model || '' %>"
-      required
+type="text"
+  id="inv_model"
+  name="inv_model"
+  minlength="3"
+  placeholder="Min 3 characters"
+  value="<%= locals.inv_model || '' %>"
+  required
     />
   </div>
 
@@ -95,13 +95,13 @@
   <div class="input">
     <label for="inv_price">Price</label>
     <input
-      type="text"
-      id="inv_price"
-      name="inv_price"
-      pattern="^[0-9]+(\.[0-9]{1,2})?$"
-      placeholder="Decimal or integer"
-      value="<%= inv_price || '' %>"
-      required
+type="text"
+  id="inv_price"
+  name="inv_price"
+  pattern="^[0-9]+(\.[0-9]{1,2})?$"
+  placeholder="e.g. 25000 or 25000.00"
+  value="<%= locals.inv_price || '' %>"
+  required
     />
   </div>
 
@@ -109,14 +109,14 @@
   <div class="input">
     <label for="inv_year">Year</label>
     <input
-      type="text"
-      id="inv_year"
-      name="inv_year"
-      pattern="^[0-9]{4}$"
-      maxlength="4"
-      placeholder="4-digit year"
-      value="<%= inv_year || '' %>"
-      required
+type="text"
+  id="inv_year"
+  name="inv_year"
+  pattern="^[0-9]{4}$"
+  maxlength="4"
+  placeholder="4-digit year"
+  value="<%= locals.inv_year || '' %>"
+  required
     />
   </div>
 

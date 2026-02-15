@@ -16,10 +16,9 @@ router.get(
 // Inventory Management view (PROTECTED – MAIN)
 router.get(
   "/",
-  accMiddleware.checkEmployeeOrAdmin,
+  accMiddleware.checkEmployeeOrAdmin,  // Or utilities.checkAccountType if that's your var
   utilities.handleErrors(invController.buildManagement)
-)
-
+);
 // Build details by Inventory ID view
 router.get(
   "/detail/:inventoryId",
